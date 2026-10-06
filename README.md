@@ -87,3 +87,22 @@ pytest
 
 The tests build synthetic workbooks in a temp directory; they do not read
 anything from `data/`.
+
+## Daily run
+
+`scripts/daily.sh` is the one-command daily run. It takes the newest workbook
+in `data/` (or a path you pass), writes `reports/<date>.txt` and
+`reports/latest.txt`, and appends to `state/history.json` so the
+history-based rules accumulate. Exit code 1 means reconciliation failed.
+
+Local cron, every day at 06:53 (adjust the path):
+
+```cron
+53 6 * * * cd /path/to/portfolio-monitor && ./scripts/daily.sh >> reports/cron.log 2>&1
+```
+
+Claude Code on the web: a scheduled Routine can open a fresh session each
+morning that runs the same script against an export you upload to that
+session. Because sessions are ephemeral, also upload the previous
+`state/history.json` if you want drawdown and crossing rules to keep their
+history; the session sends the updated state back to you.

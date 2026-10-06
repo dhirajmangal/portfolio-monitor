@@ -468,8 +468,10 @@ def evaluate_rules(s: Snapshot, rec: dict[str, Any], m: dict[str, Any], state: d
             add("RED", "R2", f"Plan returns are {page} days old (as of {s.plan.as_of:%b %d, %Y})")
     if prev and len(cur["positions"]) != len(prev["positions"]) and not (d["added"] or d["removed"]):
         add("RED", "R3", "Position count changed without an added/removed symbol")
-    if prev and prev.get("snapshot") and cur.get("snapshot") and cur["snapshot"] <= prev["snapshot"]:
-        add("RED", "R1", f"Stale export: snapshot {cur['snapshot']} is not newer than {prev['snapshot']}")
+    stale = bool(prev and prev.get("snapshot") and cur.get("snapshot") and cur["snapshot"] <= prev["snapshot"])
+    if stale:
+        add("RED", "R1", f"Stale export: snapshot {cur['snapshot']} is not newer than {prev['snapshot']}; "
+                         "this run is not recorded in history")
 
     # --- Portfolio-level moves
     dp = m["day_pct"]
@@ -610,8 +612,11 @@ def evaluate_rules(s: Snapshot, rec: dict[str, Any], m: dict[str, Any], state: d
 
     order = {"RED": 0, "AMBER": 1, "INFO": 2}
     alerts.sort(key=lambda a: (order[a.level], int(a.rule[1:])))
-    new_state = {"runs": runs + [cur], "hwm_total": hwm_total, "hwm_pos": hwm_pos,
-                 "first_seen": first_seen, "fired": fired_now}
+    if stale:
+        new_state = dict(state)
+    else:
+        new_state = {"runs": runs + [cur], "hwm_total": hwm_total, "hwm_pos": hwm_pos,
+                     "first_seen": first_seen, "fired": fired_now}
     return alerts, {"state": new_state, "diff": d, "cur": cur, "prev": prev}, notes
 
 

@@ -206,3 +206,11 @@ def test_state_roundtrip(tmp_path, cfg):
     st = M.load_state(str(p))
     assert len(st["runs"]) == 1 and st["hwm_total"] == pytest.approx(m["TA"])
     json.loads(p.read_text())
+
+
+def test_stale_snapshot_not_recorded(tmp_path, cfg):
+    f1 = tmp_path / "a.xlsx"
+    build_workbook(f1, BASE)
+    s, rec, m, alerts, ctx, report = run(f1, cfg)
+    s, rec, m, alerts, ctx2, report = run(f1, cfg, state=ctx["state"])
+    assert len(ctx2["state"]["runs"]) == 1
