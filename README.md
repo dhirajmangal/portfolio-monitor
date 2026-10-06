@@ -20,6 +20,8 @@ and they stay on your machine.
 ```
 prompt/PORTFOLIO_MONITOR_PROMPT.md   the operator prompt; {{BASELINE}} and bucket
                                      placeholders are filled from your export
+prompt/TRADING_STRATEGY_PROMPT.md    strategy, backtest, VaR and risk-ratio prompt
+                                     for an agent connected to the IBKR connector
 monitor/monitor.py                   parser, reconciliation, metrics, rules, report
 config.example.json                  thresholds and bucket definitions
 tests/                               synthetic-data tests
