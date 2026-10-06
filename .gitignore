@@ -1,0 +1,15 @@
+# Personal financial data never goes into git
+data/
+state/
+reports/
+*.xlsx
+*.xls
+*.csv
+*.pdf
+*.png
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
