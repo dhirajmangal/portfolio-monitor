@@ -13,3 +13,6 @@ __pycache__/
 *.pyc
 .venv/
 .pytest_cache/
+
+# Local config override (copy of config.example.json)
+config.json
